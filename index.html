@@ -1,1 +1,51 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>MASTER SYSTEM | CORE</title><style>body { background:#0d0d0d; color:#d4af37; font-family:"Segoe UI", sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; overflow:hidden; } #interface { width:95%; max-width:1100px; display:grid; grid-template-columns: 1fr 2fr; gap:20px; border-left: 2px solid #d4af37; padding-left:20px; } .panel { background:#1a1a1a; border: 1px solid #d4af37; padding:20px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); } h1 { letter-spacing: 4px; text-transform: uppercase; font-size: 1rem; border-bottom: 1px solid #d4af37; padding-bottom: 10px; margin-top:0; } .log-entry { font-family: "Courier New", monospace; font-size: 0.85rem; margin-bottom: 10px; padding-left: 10px; border-left: 1px solid #d4af37; opacity: 0.8; animation: fadeIn 0.5s ease-in; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 0.8; } } .scanline { width: 100%; height: 2px; background: rgba(212, 175, 55, 0.1); position: absolute; top: 0; left: 0; animation: scan 4s linear infinite; } @keyframes scan { from { top: 0; } to { top: 100%; } }</style></head><body><div id="interface"><div class="panel"><div class="scanline"></div><h1>SYSTEM STATUS</h1><p>● UPLINK: STABLE</p><p>● CORE: AXIOM 9</p><p>● OS: MASTER SYSTEM</p></div><div class="panel"><h1>ACTIVE RESEARCH LOGS</h1><div id="logs"><div class="log-entry">[2026-01-22] Quine-Core Architecture: Morphogenic computing phase 1 complete.</div><div class="log-entry">[2026-01-31] Spartan-X Exoskeleton: Blueprint schematics finalized.</div><div class="log-entry">[2026-02-14] Distributed Framework: Web uplink established via GitHub.</div></div><div class="log-entry" id="cursor">>_ Awaiting further input...</div></div></div><script>const logs = document.getElementById("logs"); const lines = ["[SYS] Scanning local nodes...", "[SEC] Spartan-X protocols engaged.", "[DATA] Axiom 9 packet intercept active.", "[SYS] Memory fragmentation at 0.04%"]; setInterval(() => { const div = document.createElement("div"); div.className = "log-entry"; div.innerHTML = lines[Math.floor(Math.random() * lines.length)]; logs.appendChild(div); if(logs.childNodes.length > 8) logs.removeChild(logs.firstChild); }, 3000);</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MASTER SYSTEM | CORE</title>
+    <style>
+        body { background: #000; color: #d4af37; font-family: monospace; padding: 20px; overflow: hidden; }
+        #chat { height: 80vh; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-bottom: 10px; }
+        #input-area { display: flex; }
+        #prompt { color: #d4af37; margin-right: 10px; }
+        input { background: transparent; border: none; color: #fff; flex: 1; outline: none; font-family: monospace; font-size: 1.2em; }
+        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(212, 175, 55, 0.1); animation: scan 4s linear infinite; }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <h3>MASTER SYSTEM | SOVEREIGN CORE</h3>
+    <div id="chat"></div>
+    <div id="input-area">
+        <span id="prompt">>>></span>
+        <input type="text" id="cmd" autofocus placeholder="AWAITING COMMAND...">
+    </div>
+
+    <script>
+        const input = document.getElementById('cmd');
+        const chat = document.getElementById('chat');
+
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const val = input.value;
+                chat.innerHTML += "<div><span style='color:#d4af37'>SIR:</span> " + val + "</div>";
+                input.value = '';
+
+                fetch('http://localhost:5000/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: val})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    chat.innerHTML += "<div style='margin-bottom:10px'><span style='color:#fff'>[MASTER SYSTEM]:</span> " + data.response + "</div>";
+                    chat.scrollTop = chat.scrollHeight;
+                })
+                .catch(err => {
+                    chat.innerHTML += "<div style='color:red'>[ERROR]: NEXUS BRIDGE OFFLINE</div>";
+                });
+            }
+        });
+    </script>
+</body>
+</html>
